@@ -1,0 +1,23 @@
+{
+  "name": "micro-agi-js",
+  "version": "1.0.0",
+  "description": "A library to create and manage OpenAI AGI Agents.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlessandroAnnini/micro-agi-js.git"
+  },
+  "author": "Alessandro Annini <github_username:AlessandroAnnini>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AlessandroAnnini/micro-agi-js/issues"
+  },
+  "homepage": "https://github.com/AlessandroAnnini/micro-agi-js#readme",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "openai": "^4.11.1"
+  }
+}
