@@ -125,6 +125,7 @@ export function createAgent(services, options = {}) {
     temperature = 0,
     systemMessage,
     commandFunctions,
+    isDebug = false,
   } = options;
 
   const FUNCTIONS = createFunctions(commandFunctions);
@@ -171,7 +172,19 @@ export function createAgent(services, options = {}) {
       response.function_call.arguments
     );
 
+    const args = JSON.parse(response.function_call.arguments);
+    const responseContent = Object.entries(args).reduce((res, curr) => {
+      const [key, value] = curr;
+      return `${res}\n\t${key.toUpperCase()}: ${JSON.stringify(value)};`;
+    }, '');
+    isDebug && console.log(`\n\n${responseContent}\n\n`);
+
     if (command) {
+      if (isDebug) {
+        console.log('\n\n------ USE FUNCTION ------');
+        console.log(`${JSON.stringify(command, null, 2)}\n\n`);
+      }
+
       try {
         const serviceResult = await executeServiceCommand(command, services);
         const [, funcName] = command.name.split('-');
