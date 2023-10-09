@@ -2,7 +2,13 @@
   "name": "micro-agi-js",
   "version": "1.0.0",
   "description": "A library to create and manage OpenAI AGI Agents.",
-  "keywords": ["ai", "openai", "autonomous-agents", "agi", "gpt-4"],
+  "keywords": [
+    "ai",
+    "openai",
+    "autonomous-agents",
+    "agi",
+    "gpt-4"
+  ],
   "type": "module",
   "main": "src/index.js",
   "scripts": {
