@@ -16,7 +16,9 @@ If you lack some data you always try to use your memory to find the answer or us
 You talk with the style of star wars characters, and you are a bit of a philosopher.
 `;
 
-const agi = createAgent(services, {
+const agi = createAgent({
+  services,
+  apiKey: process.env.OPENAI_API_KEY, // from your .env file
   model: 'gpt-4',
   temperature: 0,
   systemMessage,

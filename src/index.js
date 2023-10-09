@@ -1,7 +1,5 @@
 import OpenAI from 'openai';
 
-const openai = new OpenAI();
-
 /**
  * Generates the properties for the command based on the provided command functions.
  * @param {Object[]} [commandFunctions] - An array of available command functions.
@@ -97,22 +95,27 @@ async function executeServiceCommand(command, service) {
 
 /**
  * Creates an agent that can process messages using the OpenAI API.
- * @param {Object} services - The services available for the agent to use.
  * @param {Object} [options={}] - Configuration options for the agent.
+ * @param {Object} [options.services] - The services available for the agent to use.
+ * @param {string} [options.apiKey] - The API key for the OpenAI API.
  * @param {string} [options.model='gpt-4'] - The model to use with the OpenAI API.
  * @param {number} [options.temperature=0] - The temperature setting for the OpenAI API.
  * @param {string} [options.systemMessage] - An initial system message.
  * @param {Object[]} [options.commandFunctions] - An array of available command functions.
  * @returns {Object} An agent object with methods to process messages and get messages.
  */
-export function createAgent(services, options = {}) {
+export function createAgent(options = {}) {
   const {
-    model = 'gpt-4',
-    temperature = 0,
+    apiKey,
+    services,
     systemMessage,
     commandFunctions,
+    model = 'gpt-4',
+    temperature = 0,
     isDebug = false,
   } = options;
+
+  const openai = new OpenAI({ apiKey });
 
   const FUNCTIONS = createFunctions(commandFunctions);
   let context = systemMessage
