@@ -27,7 +27,7 @@ An advanced AI agent powered by OpenAI, designed to process and respond to messa
 
 ## 🎥 Demo (example/index.js)
 
-As you can see the agent, to respond to the user's question, taps into the swapi service to retrieve the information and then uses the OpenAI API to generate the response. In prticular there is no way to have a right response unless **the agent is able to understand that it has to use different services more than once**.
+As you can see the agent, to respond to the user's question, taps into the swapi service to retrieve the information and then uses the OpenAI API to generate the response. In particular there is no way to have a right response unless **the agent is able to understand that it has to use different services more than once**.
 You can see the inner working of the agent
 
 [![asciicast](https://asciinema.org/a/pa8hSexSSHlM4rGz3dupeW6N9.svg)](https://asciinema.org/a/pa8hSexSSHlM4rGz3dupeW6N9)
@@ -38,6 +38,12 @@ Install the package using npm:
 
 ```bash
 npm install micro-agi-js
+```
+
+Be sure to have a `.env` file in the root of your project with the following variables:
+
+```bash
+OPENAI_API_KEY=your_openai_api_key
 ```
 
 ## 🚀 Usage
