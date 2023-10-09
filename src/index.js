@@ -1,9 +1,6 @@
 import OpenAI from 'openai';
-import dotenv from 'dotenv';
 
-dotenv.config();
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const openai = new OpenAI();
 
 /**
  * Generates the properties for the command based on the provided command functions.
@@ -96,17 +93,6 @@ async function executeServiceCommand(command, service) {
   } catch (e) {
     handleError(e, `Failed to use service: ${serviceName}.${funcName}`);
   }
-}
-
-/**
- * Creates a user content string with the current date and the provided user message.
- * @param {string} userMessage - The user's message.
- * @returns {string} A formatted string containing the current date and the user's message.
- */
-function createUserContent(userMessage) {
-  return `The current DATETIME is ${new Date().toISOString()}.
-MESSAGE:
-${userMessage}`;
 }
 
 /**
@@ -214,10 +200,7 @@ export function createAgent(services, options = {}) {
    * @returns {Promise<string>} The agent's response.
    */
   async function processMessage(userMessage) {
-    context = [
-      ...context,
-      { role: 'user', content: createUserContent(userMessage) },
-    ];
+    context = [...context, { role: 'user', content: userMessage }];
 
     return await recurseUntilResponse(context);
   }
