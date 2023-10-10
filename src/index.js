@@ -11,7 +11,7 @@ function createCommandProperties(commandFunctions) {
   return {
     command: {
       type: 'object',
-      description: `If you need to execute a command because you miss some data, specify it here. Example: { name: 'peopleService-searchUserContact', arguments: '{ "phoneNumber": "393381481934" }' }. Here is a list of all the available commands: ${JSON.stringify(
+      description: `If you need to execute a command because you miss some data, specify it here. Example: { name: 'peopleService-searchUserContact', arguments: '{ "phoneNumber": "391234567890" }' }. Here is a list of all the available commands: ${JSON.stringify(
         commandFunctions,
         null,
         2
@@ -38,8 +38,7 @@ function createCommandProperties(commandFunctions) {
 const createFunctions = (commandFunctions) => [
   {
     name: 'iterate',
-    description:
-      'Use this to create a new user contact with the specified parameters if it was not found previously. Try to guess display name, family name, and given name from the info provided by the user.',
+    description: `This function is called at each iteration of the conversation.`,
     parameters: {
       type: 'object',
       properties: {
@@ -152,10 +151,9 @@ export function createAgent(options = {}) {
   /**
    * Loops through the conversation until a final response is obtained.
    * @async
-   * @param {Object[]} context - The current context of the conversation.
    * @returns {Promise<string|null>} The final response or null if an error occurs.
    */
-  async function recurseUntilResponse(context) {
+  async function recurseUntilResponse() {
     const response = await fetchOpenAIResponse(context);
     const { command, response: waResponse } = JSON.parse(
       response.function_call.arguments
@@ -169,6 +167,7 @@ export function createAgent(options = {}) {
     isDebug && console.log(`\n\n${responseContent}\n\n`);
 
     if (command) {
+      // a command was returned, execute it and recurse
       if (isDebug) {
         console.log('\n\n------ USE FUNCTION ------');
         console.log(`${JSON.stringify(command, null, 2)}\n\n`);
@@ -190,10 +189,18 @@ export function createAgent(options = {}) {
         handleError(e, `Failed to use tool: ${command.name.replace('-', '.')}`);
         return null;
       }
-    } else {
+    } else if (waResponse) {
+      // a response was returned, add it to the context and return it
       context = [...context, { role: 'assistant', content: waResponse }];
       return waResponse;
     }
+
+    // neither a command nor a response was returned, recurse with the new context
+    context = [
+      ...context,
+      { role: 'assistant', content: response.function_call.arguments },
+    ];
+    return await recurseUntilResponse(context);
   }
 
   /**
