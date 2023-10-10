@@ -11,7 +11,7 @@ An advanced AI agent powered by OpenAI, designed to process and respond to messa
   - [🔧 Installation](#-installation)
   - [🚀 Usage](#-usage)
   - [🔍 API](#-api)
-    - [`createAgent(services, options)`](#createagentservices-options)
+    - [`createAgent(options)`](#createagentoptions)
     - [`agent.processMessage(userMessage)`](#agentprocessmessageusermessage)
     - [`agent.getMessages()`](#agentgetmessages)
   - [🧠 LLM Agent Overview](#-llm-agent-overview)
@@ -58,15 +58,17 @@ const services = {
 };
 
 const options = {
+  apiKey: process.env.OPENAI_API_KEY, // your OpenAI API key
+  services, // your services
   model: 'gpt-4',
   temperature: 0,
-  systemMessage: 'System Initialized',
+  systemMessage: 'You are an intergalactic barman...',
   commandFunctions: [
     /* ... */
   ],
 };
 
-const agent = createAgent(services, options);
+const agent = createAgent(options);
 
 async function main() {
   const userMessage = 'Hello!';
@@ -79,7 +81,7 @@ main();
 
 ## 🔍 API
 
-### `createAgent(services, options)`
+### `createAgent(options)`
 
 Creates an AI agent instance.
 
