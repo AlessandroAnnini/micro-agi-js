@@ -40,12 +40,6 @@ Install the package using npm:
 npm install micro-agi-js
 ```
 
-Be sure to have a `.env` file in the root of your project with the following variables:
-
-```bash
-OPENAI_API_KEY=your_openai_api_key
-```
-
 ## 🚀 Usage
 
 Here's a basic example of how to use the Micro AGI:
@@ -85,8 +79,14 @@ main();
 
 Creates an AI agent instance.
 
-- `services`: An object containing the services available for the agent to use.
 - `options`: Configuration options for the agent.
+  - `apiKey`: Your OpenAI API key.
+  - `services`: Your services.
+  - `systemMessage`: (optional) The message to display when the agent starts.
+  - `commandFunctions`: (optional) The command functions to use.
+  - `model`: (optional) The OpenAI model to use.
+  - `temperature`: (optional) The temperature to use for text generation.
+  - `isDebug`: (optional) Whether to enable debug mode.
 
 Returns an agent object with methods to process messages and retrieve messages.
 
