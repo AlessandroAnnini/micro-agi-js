@@ -14,6 +14,7 @@ An advanced AI agent powered by OpenAI, designed to process and respond to messa
     - [`createAgent(options)`](#createagentoptions)
     - [`agent.processMessage(userMessage)`](#agentprocessmessageusermessage)
     - [`agent.getMessages()`](#agentgetmessages)
+  - [🔀 Flowchart](#-flowchart)
   - [🧠 LLM Agent Overview](#-llm-agent-overview)
     - [🔑 Key Components](#-key-components)
   - [📄 License](#-license)
@@ -99,6 +100,34 @@ Processes a user message and returns the agent's response.
 ### `agent.getMessages()`
 
 Retrieves the current messages from the conversation context.
+
+## 🔀 Flowchart
+
+```mermaid
+flowchart TD
+    A[Start]
+    B[User sends a message]
+    C[processMessage function]
+    D[recurseUntilResponse function]
+    E[Send message to AI API]
+    F[Execute service command]
+    G[Add command result to context]
+    H[Add AI response to context]
+    J[Add response for the user to context]
+    K[End]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --"returned command"--> F
+    F --> G
+    G --> D
+    E --"returned reasoning"--> H
+    H --> D
+    E --"returned response"--> J
+    J --> K
+```
 
 ## 🧠 LLM Agent Overview
 
