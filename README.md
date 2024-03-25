@@ -7,7 +7,7 @@ An advanced AI agent powered by OpenAI, designed to process and respond to messa
 - [🤖 Micro AGI](#-micro-agi)
   - [📜 Table of Contents](#-table-of-contents)
   - [🌟 Features](#-features)
-  - [🎥 Demo (example/index.js)](#-demo-exampleindexjs)
+  - [🎥 Demo (examples/swapi/index.js)](#-demo-examplesswapiindexjs)
   - [🔧 Installation](#-installation)
   - [🚀 Usage](#-usage)
   - [🔍 API](#-api)
@@ -26,7 +26,7 @@ An advanced AI agent powered by OpenAI, designed to process and respond to messa
 - **Flexible Configuration**: Comes with various configuration options to tailor the agent's behavior.
 - **Error Handling**: Robust error handling mechanisms for better reliability.
 
-## 🎥 Demo (example/index.js)
+## 🎥 Demo (examples/swapi/index.js)
 
 As you can see the agent, to respond to the user's question, taps into the swapi service to retrieve the information and then uses the OpenAI API to generate the response. In particular there is no way to have a right response unless **the agent is able to understand that it has to use different services more than once**.
 You can see the inner working of the agent
