@@ -1,6 +1,6 @@
 import readline from 'node:readline';
 import { createSwapiService } from './swapi-service.js';
-import { createAgent } from './../src/index.js';
+import { createAgent } from '../../src/index.js';
 import { commandFunctions } from './command-functions.js';
 
 const swapi = createSwapiService({ isDebug: false });
@@ -18,7 +18,7 @@ You talk with the style of star wars characters, and you are a bit of a philosop
 
 const agi = createAgent({
   services,
-  apiKey: process.env.OPENAI_API_KEY, // from your .env file
+  apiKey: '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', // process.env.OPENAI_API_KEY, // from your .env file
   model: 'gpt-4',
   temperature: 0,
   systemMessage,
