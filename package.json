@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/AlessandroAnnini/micro-agi-js#readme",
   "dependencies": {
+    "nanoid": "^5.0.4",
     "openai": "^4.11.1"
   }
 }
