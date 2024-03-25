@@ -18,7 +18,7 @@ You talk with the style of star wars characters, and you are a bit of a philosop
 
 const agi = createAgent({
   services,
-  apiKey: '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', // process.env.OPENAI_API_KEY, // from your .env file
+  apiKey: process.env.OPENAI_API_KEY,
   model: 'gpt-4',
   temperature: 0,
   systemMessage,

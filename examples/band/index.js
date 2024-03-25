@@ -12,7 +12,7 @@ const services = {
 
 const options = {
   services,
-  apiKey: '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', // process.env.OPENAI_API_KEY, // from your .env file
+  apiKey: process.env.OPENAI_API_KEY,
   model: 'gpt-4-1106-preview',
   temperature: 0.4,
   commandFunctions,
