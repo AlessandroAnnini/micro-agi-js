@@ -72,7 +72,7 @@ function createFunctions(commandFunctions = []) {
           response_buffer: {
             type: 'string',
             description:
-              'Store the response here while there are still next steps.',
+              'Store the response here while next steps are being processed.',
           },
           ...createCommandProperties(commandFunctions),
           response: {
@@ -80,7 +80,7 @@ function createFunctions(commandFunctions = []) {
             description: 'The final response to the user.',
           },
         },
-        required: ['thought', 'analysis', 'next_steps', 'response_buffer'],
+        required: ['thought', 'analysis', 'response_buffer'],
       },
     },
   ];
@@ -97,6 +97,13 @@ function handleError(error, customMessage = '') {
   throw error;
 }
 
+const baseSystemMessage = `You are capable of complex reasoning and problem-solving.
+When presented with a task, think through the problem step-by-step,
+analyze potential solutions, and provide a well-thought-out response.
+If you need more information or need to perform an abstract action, plan accordingly and communicate your reasoning.
+Be always clear and specific about what you need to proceed.
+You always answer with one between "response" or "command".`;
+
 /**
  * Creates an agent that can process messages using the OpenAI API.
  * @param {Object} options - Configuration options for the agent.
@@ -107,16 +114,13 @@ export function createAgent(options = {}) {
     id = generateId(),
     apiKey,
     services = {},
-    systemMessage = `
-You are an AI assistant capable of complex reasoning and problem-solving.
-When presented with a task, think through the problem step-by-step,
-analyze potential solutions, and provide a well-thought-out response.
-If you need more information or need to perform an abstract action, plan accordingly and communicate your reasoning.`,
+    systemMessage,
     commandFunctions = [],
     model = 'gpt-4',
     temperature = 0.7,
     maxTokens = 1500,
     pricePer1KTokens = 0,
+    maximumRecursionDepth = 10,
     isDebug = false,
   } = options;
 
@@ -140,8 +144,10 @@ If you need more information or need to perform an abstract action, plan accordi
 
   const FUNCTIONS = createFunctions(commandFunctions);
 
-  let context = systemMessage
-    ? [{ role: 'system', content: systemMessage }]
+  const fullSystemMessage = `<IDENTITY>\n${baseSystemMessage}\n</IDENTITY>\n<INSTRUCTIONS>\n${systemMessage}\n</INSTRUCTIONS>`;
+  console.log(fullSystemMessage);
+  let context = fullSystemMessage
+    ? [{ role: 'system', content: fullSystemMessage }]
     : [];
   let totalTokens = 0;
 
@@ -154,7 +160,7 @@ If you need more information or need to perform an abstract action, plan accordi
    */
   async function executeServiceCommand(command, services) {
     const [serviceName, funcName] = command.name.split('-');
-    const args = JSON.parse(command.arguments);
+    const args = command.arguments ? JSON.parse(command.arguments) : undefined;
 
     logDebug('Executing service command', { serviceName, funcName, args });
 
@@ -190,7 +196,8 @@ If you need more information or need to perform an abstract action, plan accordi
    */
   async function fetchOpenAIResponse(openai, params) {
     try {
-      logDebug('Sending request to OpenAI', { params });
+      const { functions, ...toLoggerObj } = params;
+      // logDebug('Sending request to OpenAI', { params: toLoggerObj });
 
       const chatCompletion = await openai.chat.completions.create(params);
       const [choice] = chatCompletion.choices;
@@ -201,7 +208,7 @@ If you need more information or need to perform an abstract action, plan accordi
       const response = choice.message;
       const usage = chatCompletion.usage;
 
-      logDebug('Received response from OpenAI', { response, usage });
+      // logDebug('Received response from OpenAI', { response, usage });
 
       return { response, usage };
     } catch (error) {
@@ -215,8 +222,7 @@ If you need more information or need to perform an abstract action, plan accordi
    * @returns {Promise<string>} The final response.
    */
   async function recurseUntilResponse(recursionDepth = 0) {
-    const MAX_RECURSION_DEPTH = 10;
-    if (recursionDepth > MAX_RECURSION_DEPTH) {
+    if (recursionDepth > maximumRecursionDepth) {
       throw new Error('Maximum recursion depth reached.');
     }
 
@@ -240,7 +246,7 @@ If you need more information or need to perform an abstract action, plan accordi
 
     logDebug('Parsed response arguments', { args });
 
-    const { command, response: assistantResponse, next_steps } = args;
+    const { command, response: assistantResponse } = args;
 
     if (command) {
       logDebug('Processing command', { command });
@@ -273,14 +279,22 @@ If you need more information or need to perform an abstract action, plan accordi
 
       return assistantResponse;
     } else {
-      // When no command or response is provided, encourage further reasoning or ask for clarification
-      const clarificationMessage =
-        'Could you please provide more details or clarify your request?';
-      context.push({ role: 'assistant', content: clarificationMessage });
+      // // When no command or response is provided, encourage further reasoning or ask for clarification
+      // const clarificationMessage =
+      //   'Could you please provide more details or clarify your request?';
+      // context.push({ role: 'assistant', content: clarificationMessage });
 
-      logDebug('Asking for clarification', { clarificationMessage });
+      // logDebug('Asking for clarification', { clarificationMessage });
 
-      return clarificationMessage;
+      // return clarificationMessage;
+
+      const youCanProcedeMessage =
+        'Please execute the next step with reasoning, with a command or answer the question. If you cannot proceed, ask for help with a specific question as "response"';
+      context.push({ role: 'user', content: youCanProcedeMessage });
+
+      logDebug('Push for AI to proceed', { youCanProcedeMessage });
+
+      return await recurseUntilResponse(recursionDepth + 1);
     }
   }
 
