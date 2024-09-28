@@ -11,9 +11,7 @@
   ],
   "type": "module",
   "main": "src/index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/AlessandroAnnini/micro-agi-js.git"
@@ -25,7 +23,14 @@
   },
   "homepage": "https://github.com/AlessandroAnnini/micro-agi-js#readme",
   "dependencies": {
-    "nanoid": "^5.0.4",
-    "openai": "^4.11.1"
+    "dotenv": "^16.4.5",
+    "nanoid": "^5.0.7",
+    "openai": "^4.65.0",
+    "pino": "^9.4.0",
+    "pino-pretty": "^11.2.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.47.2",
+    "@types/node": "^22.7.4"
   }
 }
