@@ -2,9 +2,22 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 export function createFsService({ folder }) {
+  function fileExists({ filename }) {
+    return fs.existsSync(path.join(folder, filename));
+  }
+
+  function createFile({ filename }) {
+    // Ensure the folder exists
+    if (!fs.existsSync(folder)) {
+      fs.mkdirSync(folder, { recursive: true });
+    }
+
+    fs.writeFileSync(path.join(folder, filename), '', 'utf8');
+    return `Created ${filename}`;
+  }
+
   function readFile({ filename }) {
-    const content = fs.readFileSync(path.join(folder, filename), 'utf8');
-    return content;
+    return fs.readFileSync(path.join(folder, filename), 'utf8');
   }
 
   function writeFile({ filename, content }) {
@@ -33,8 +46,10 @@ export function createFsService({ folder }) {
   }
 
   return {
+    fileExists,
+    createFile,
     readFile,
-    writeFile,
+    // writeFile,
     appendFile,
     deleteFile,
   };

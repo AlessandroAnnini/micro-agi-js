@@ -1,5 +1,33 @@
 export const commandFunctions = [
   {
+    name: 'fsService-fileExists',
+    description: 'Check if a file exists.',
+    parameters: {
+      type: 'object',
+      properties: {
+        filename: {
+          type: 'string',
+          description: 'The name of the file to check.',
+        },
+      },
+      required: ['filename'],
+    },
+  },
+  {
+    name: 'fsService-createFile',
+    description: 'Create a file.',
+    parameters: {
+      type: 'object',
+      properties: {
+        filename: {
+          type: 'string',
+          description: 'The name of the file to create.',
+        },
+      },
+      required: ['filename'],
+    },
+  },
+  {
     name: 'fsService-readFile',
     description: 'Read content from a file.',
     parameters: {
@@ -11,24 +39,6 @@ export const commandFunctions = [
         },
       },
       required: ['filename'],
-    },
-  },
-  {
-    name: 'fsService-writeFile',
-    description: 'Write content to a file.',
-    parameters: {
-      type: 'object',
-      properties: {
-        filename: {
-          type: 'string',
-          description: 'The name of the file to write.',
-        },
-        content: {
-          type: 'string',
-          description: 'The content of the file to write.',
-        },
-      },
-      required: ['filename', 'content'],
     },
   },
   {

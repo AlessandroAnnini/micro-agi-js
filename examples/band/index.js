@@ -2,6 +2,9 @@
 import { createFsService } from './fs-service.js';
 import { commandFunctions } from './fs-commands.js';
 import { createAgent } from '../../src/index.js';
+import dotenv from 'dotenv';
+
+dotenv.config({ path: './../../.env' });
 
 const fsService = createFsService({ folder: './' });
 
@@ -13,8 +16,8 @@ const services = {
 const options = {
   services,
   apiKey: process.env.OPENAI_API_KEY,
-  model: 'gpt-4-1106-preview',
-  temperature: 0.4,
+  model: 'gpt-4o',
+  temperature: 0.7,
   commandFunctions,
   isDebug: true,
 };
@@ -23,10 +26,8 @@ const producerMessage = `You are the producer of a band.
 Your role is to decide the basic information about a song.
 Do not respond until you completed the steps below.
 STEPS:
-- If the file named "Critique.txt" exists, read it.
-- Use a file named "Song_Info.txt".
-- If song you read a critique, and the details of the song are already written in the file, skip the next step.
-- If the song details are missing, Write the following details in the file:
+- Use a file named "Song_Info.txt". If it doesn't exist create it.
+- Think aboout the following details and write them in the file:
   - Title
   - Genre
   - Theme
@@ -35,10 +36,7 @@ STEPS:
   - Key
   - Time Signature
   - BPM (Beats Per Minute)
-- If the song details are already written in the file, write, just below the song details, before the lyrics, indications about how to modify the song because of the critique and why, in a way that the next agents can understand.
-- The values you choose are to be creative but realistic for a song.
-- Ensure that the information is clear and concise for the next agents.
-- After completing the song information and writing it in the file, say: "Producer task completed"`;
+- After this say: "Producer task completed"`;
 const producer = createAgent({
   ...options,
   id: 'producer',
@@ -51,10 +49,9 @@ Do not respond until you completed the steps below.
 STEPS:
 - Read the file named "Song_Info.txt" created by the producer.
 - Understand the theme, style, and structure outlined in the file.
-- Understand the modifications if present.
-- Write lyrics that fit the rhyme scheme and theme mentioned in the file or change the current ones based on the modifications instructions.
-- Append the lyrics to the "Song_Info.txt" file under a new section titled "Lyrics".
+- Think about lyrics that fit the rhyme scheme and theme mentioned in the file.
 - Ensure that the lyrics are coherent and match the song's overall tone and structure.
+- Append the lyrics to the "Song_Info.txt" file under a new section titled "Lyrics".
 - Once you have finished writing the lyrics and writing it in the file, say: "Singer task completed"`;
 const singer = createAgent({
   ...options,
@@ -63,14 +60,36 @@ const singer = createAgent({
 });
 
 const guitaristMessage = `You are the guitarist of a band.
-Your role is to integrate or modify guitar chords into the song's lyrics based on the information provided.
+Your role is to write guitar chords into the song's lyrics based on the information provided.
 Do not respond until you have completed the steps below.
 STEPS:
 - Read the file named "Song_Info.txt", which contains song information and lyrics.
 - Understand the key, time signature, BPM, and feel of the song as described.
-- Create guitar chords that complement the lyrics and fit the song's overall mood and style.
-- Write the chords directly above the corresponding lyrics in the "Song_Info.txt" file, aligning them with the exact words where the chord changes should occur.
+- Think about guitar chords that complement the lyrics and fit the song's overall mood and style.
 - Ensure that the chords are appropriate, playable, and in harmony with the song's rhythm and key.
+- Write the chords directly above the corresponding lyrics in the "Song_Info.txt" file, aligning them with the exact words where the chord changes should occur like in the following example from the song "Basket Case" by Green Day:
+<chords-example>
+[Verse 1]
+Eb              Bb      Cm           Gm
+Do you have the time to listen to me whine
+ Ab               Eb              Bb
+About nothing and everything all at once.
+Eb          Bb
+I am one of those
+  Cm         Gm
+Melodramatic fools.
+   Ab           Eb                     Bb
+Neurotic to the bone no doubt about it.
+</chords-example>
+- Add a section, after the lyrics, titled "Main Riff Tab" and write the guitar tab for the main riff of the song like this example:
+<tab-example>
+|--------------------|
+|--------------------|
+|-----17--16---------|
+|------------12/14---|
+|--15----------------|
+|--------------------|
+</tab-example>
 - After integrating and aligning the guitar chords with the lyrics in the file, respond with: "Guitarist task completed".`;
 const guitarist = createAgent({
   ...options,
@@ -99,10 +118,10 @@ const critic = createAgent({
   systemMessage: criticMessage,
 });
 
-await producer.processMessage('start');
+// await producer.processMessage('start');
 await singer.processMessage('start');
-await guitarist.processMessage('start');
-await critic.processMessage('start');
+// await guitarist.processMessage('start');
+// await critic.processMessage('start');
 
 // // create a loop that reads user input from cli and sends it to the agent
 // const rl = readline.createInterface({
